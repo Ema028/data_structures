@@ -6,6 +6,7 @@ int hash(int n, int size)
     return int(size * ((k * A) % 1));
 }
 
+// version without chaining
 bool containsDuplicate(int* nums, int numsSize) 
 {
     int hashtable[numsSize];
