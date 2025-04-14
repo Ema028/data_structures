@@ -1,28 +1,66 @@
-// hash function using Knuth's multiplicative method
+typedef struct node
+{
+    int n;
+    struct node* next;
+}node;
+
+// hash function usando Knuth's multiplicative method
 int hash(int n, int size)
 {
     // golden ratio * 2^32
-    int A = 2654435761;
-    return int(size * ((k * A) % 1));
+    unsigned int A = 2654435761;
+    unsigned x = (n * A) % size;
+    return x;
 }
 
-// version without chaining
+void freeHashtable(node** array, int size)
+{
+    // free tds as linked lists
+    for (int i = 0; i < size; i++)
+    {
+        node* tmp = array[i];
+        while (tmp != NULL)
+        {
+            node* to_free = tmp;
+            tmp = tmp->next;
+            free(to_free);
+        }
+    }
+    free(array);
+}
+
 bool containsDuplicate(int* nums, int numsSize) 
 {
-    int hashtable[numsSize];
-    for (int i = 0; i < numsSize; i++)
+    node** hashtable = calloc(numsSize, sizeof(node*)); // array de nodes, calloc inicializa com zeros
+    if (hashtable == NULL)
     {
-        hashtable[i] = 0;
+        return false;
     }
 
     for (int i = 0; i < numsSize; i++)
     {
         int index = hash(nums[i], numsSize);
-        if(hashtable[index] != 0)
+        node* tmp = hashtable[index];
+        while(tmp != NULL)
         {
-            return true;
+            if(tmp -> n == nums[i])
+            {
+                freeHashtable(hashtable, numsSize);
+                return true;
+            }
+            tmp = tmp->next;
         }
-        hashtable[index] = nums[i];
+    
+        node* list = malloc(sizeof(node));
+        if(list == NULL)
+        {
+            freeHashtable(hashtable, numsSize);
+            return false;
+        }
+        list -> n = nums[i];
+        list -> next = hashtable[index];
+        hashtable[index] = list;
     }
+    freeHashtable(hashtable, numsSize);
     return false;
 }
