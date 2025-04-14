@@ -1,2 +1,2 @@
 # data_structures
-implementação simples de hashtables e tries
+implementação simples de algumas estruturas de dados
